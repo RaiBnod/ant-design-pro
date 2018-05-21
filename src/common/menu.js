@@ -2,8 +2,19 @@ import { isUrl } from '../utils/utils';
 
 const menuData = [
   {
-    name: 'App Store',
+    name: 'Dashboard',
     icon: 'dashboard',
+    path: 'dashboard',
+    children: [
+      {
+        name: 'Monitor',
+        path: 'monitor',
+      },
+    ],
+  },
+  {
+    name: 'App Store',
+    icon: 'check-circle-o',
     path: 'app_store',
   },
   {

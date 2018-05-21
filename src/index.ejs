@@ -5,12 +5,35 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ant Design Pro</title>
+  <title>EnviroServicess</title>
   <link rel="icon" href="/favicon.png" type="image/x-icon">
+  <script src="//cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vertx/2.0.0/vertxbus.min.js"></script>
+
 </head>
 
 <body>
-  <div id="root"></div>
+<div id="root"></div>
+
+<script>
+  var eb;
+  var address = "io.nubespark.ditto.events";
+  var registerEventBus = (component) => {
+    eb = new vertx.EventBus("http://localhost:8085/eventbus");
+    eb.onopen = function() {
+      eb.registerHandler(address, function(event) {
+        component.callback(event);
+      });
+    }
+  }
+
+  var unregisterEventBus = () => {
+    console.log('Before closing')
+    eb.close();
+  }
+
+</script>
+
 </body>
 
 </html>
