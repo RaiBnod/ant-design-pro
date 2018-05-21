@@ -1,6 +1,8 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
+const parentUrl = 'http://localhost:3031';
+
 export async function queryProjectNotice() {
   return request('/api/project/notice');
 }
@@ -46,6 +48,26 @@ export async function fakeChartData() {
 
 export async function queryTags() {
   return request('/api/tags');
+}
+
+export async function installApp(params) {
+  return request(parentUrl.concat('/api/store/install'), {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
+export async function uninstallApp(params) {
+  return request(parentUrl.concat('/api/store/uninstall'), {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
 }
 
 export async function queryBasicProfile() {

@@ -69,9 +69,26 @@ function getFlatMenuData(menus) {
 
 export const getRouterData = app => {
   const routerConfig = {
+    // ---------- Used section ----------------------------------------------------------
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
+    '/app_store': {
+      component: dynamicWrapper(app, ['listApp', 'appStore'], () =>
+        import('../routes/AppStore/AppStore')
+      ),
+    },
+    '/exception/403': {
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
+    },
+    '/exception/404': {
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/404')),
+    },
+    '/exception/500': {
+      component: dynamicWrapper(app, [], () => import('../routes/Exception/500')),
+    },
+    // ----------------------------------------------------------------------------------
+
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },
@@ -141,15 +158,6 @@ export const getRouterData = app => {
     },
     '/result/fail': {
       component: dynamicWrapper(app, [], () => import('../routes/Result/Error')),
-    },
-    '/exception/403': {
-      component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
-    },
-    '/exception/404': {
-      component: dynamicWrapper(app, [], () => import('../routes/Exception/404')),
-    },
-    '/exception/500': {
-      component: dynamicWrapper(app, [], () => import('../routes/Exception/500')),
     },
     '/exception/trigger': {
       component: dynamicWrapper(app, ['error'], () =>
