@@ -6,6 +6,8 @@ import Authorized from '../../utils/Authorized';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import NumberInfo from '../../components/NumberInfo/index';
 import MiniArea from '../../components/Charts/MiniArea/index';
+import { registerEventBus, unregisterEventBus } from '../../eventBusRegistration';
+import { DITTO_EVENTS } from '../../constants';
 
 const { Secured } = Authorized;
 
@@ -23,13 +25,14 @@ export default class Monitor extends PureComponent {
   state = { values: [], totalCount: 100 };
 
   componentDidMount() {
-    window.registerEventBus(this);
+    registerEventBus(this, DITTO_EVENTS);
   }
 
   componentWillUnmount() {
-    window.unregisterEventBus();
+    unregisterEventBus();
   }
 
+  // callback fires on the registerEventBus output
   callback = payload => {
     this.setState(({ values }) => {
       const { thingId } = payload.value;

@@ -15,25 +15,6 @@
 <body>
 <div id="root"></div>
 
-<script>
-  var eb;
-  var address = "io.nubespark.ditto.events";
-  var registerEventBus = (component) => {
-    eb = new vertx.EventBus("http://localhost:8085/eventbus");
-    eb.onopen = function() {
-      eb.registerHandler(address, function(event) {
-        component.callback(event);
-      });
-    }
-  }
-
-  var unregisterEventBus = () => {
-    console.log('Before closing')
-    eb.close();
-  }
-
-</script>
-
 </body>
 
 </html>

@@ -1,7 +1,6 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
-
-const parentUrl = 'http://localhost:3031';
+import { apiUrl } from '../urls';
 
 export async function queryProjectNotice() {
   return request('/api/project/notice');
@@ -51,7 +50,7 @@ export async function queryTags() {
 }
 
 export async function installApp(params) {
-  return request(parentUrl.concat('/api/store/install'), {
+  return request(apiUrl.concat('/api/store/install'), {
     method: 'POST',
     body: {
       ...params,
@@ -61,7 +60,7 @@ export async function installApp(params) {
 }
 
 export async function uninstallApp(params) {
-  return request(parentUrl.concat('/api/store/uninstall'), {
+  return request(apiUrl.concat('/api/store/uninstall'), {
     method: 'POST',
     body: {
       ...params,
