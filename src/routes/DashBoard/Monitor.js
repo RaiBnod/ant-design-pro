@@ -1,13 +1,12 @@
 import moment from 'moment';
+import { Card, Row } from 'antd';
+import { Chart, Geom, Axis, Tooltip } from 'bizcharts';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card } from 'antd';
 import Authorized from '../../utils/Authorized';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import NumberInfo from '../../components/NumberInfo/index';
-import MiniArea from '../../components/Charts/MiniArea/index';
 import { registerEventBus, unregisterEventBus } from '../../eventBusRegistration';
 import { DITTO_EVENTS } from '../../constants';
+import styles from '../DashBoard/Monitor.less';
 
 const { Secured } = Authorized;
 
@@ -22,7 +21,7 @@ const havePermissionAsync = new Promise(resolve => {
   loading: loading.models.monitor,
 }))
 export default class Monitor extends PureComponent {
-  state = { values: [], totalCount: 100 };
+  state = { data: [], totalCount: 25 };
 
   componentDidMount() {
     registerEventBus(this, DITTO_EVENTS);
@@ -34,54 +33,51 @@ export default class Monitor extends PureComponent {
 
   // callback fires on the registerEventBus output
   callback = payload => {
-    this.setState(({ values }) => {
+    this.setState(({ data }) => {
       const { thingId } = payload.value;
-      const previousValue = values[thingId] ? values[thingId] : [];
+      const previousValue = data[thingId] ? data[thingId] : [];
       previousValue.push({
-        y: payload.value.features.temperature.properties.value,
-        x: moment(payload.value.features.temperature.properties.timestamp).format('HH:mm:ss'),
+        value: payload.value.features.temperature.properties.value,
+        timestamp: moment(payload.value.features.temperature.properties.timestamp).format('mm:ss'),
       });
       const valuesToBeAdded = previousValue.slice(-this.state.totalCount);
-      return { values: { ...values, [thingId]: valuesToBeAdded } };
+      return { data: { ...data, [thingId]: valuesToBeAdded } };
     });
   };
 
   render() {
+    const scale = {
+      value: { min: 0 },
+      timestamp: { range: [0, 1] },
+    };
+
     return (
-      <PageHeaderLayout
-        title="Monitor"
-        content="We can see the sensors graphical representation over here..."
-      >
-        <Card bordered={false}>
-          <Fragment>
-            {Object.keys(this.state.values).map(x => (
-              <div key={x}>
-                <NumberInfo total={x} />
-                <div style={{ marginTop: 32, marginBottom: 32 }}>
-                  <MiniArea
-                    animate={false}
-                    line
-                    borderWidth={2}
-                    height={84}
-                    scale={{
-                      y: {
-                        tickCount: this.state.totalCount,
-                      },
-                    }}
-                    yAxis={{
-                      tickLine: false,
-                      label: false,
-                      title: false,
-                      line: false,
-                    }}
-                    data={this.state.values[x]}
-                  />
+      <Fragment>
+        {Object.keys(this.state.data).map(x => (
+          <div className={styles.chartCard} key={x}>
+            <h1>{x}</h1>
+            <Card loading={this.props.loading} bordered={false} bodyStyle={{ padding: 0 }}>
+              <Row>
+                <div className={styles.chartBar}>
+                  <Chart title={x} height={250} data={this.state.data[x]} scale={scale} forceFit>
+                    <Axis name="year" />
+                    <Axis name="value" />
+                    <Tooltip crosshairs={{ type: 'y' }} />
+                    <Geom type="area" position="timestamp*value" size={2} />
+                    <Geom
+                      type="point"
+                      position="timestamp*value"
+                      size={4}
+                      shape="circle"
+                      style={{ stroke: '#fff', lineWidth: 1 }}
+                    />
+                  </Chart>
                 </div>
-              </div>
-            ))}
-          </Fragment>
-        </Card>
-      </PageHeaderLayout>
+              </Row>
+            </Card>
+          </div>
+        ))}
+      </Fragment>
     );
   }
 }
