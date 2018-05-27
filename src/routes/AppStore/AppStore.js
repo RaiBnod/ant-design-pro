@@ -6,6 +6,8 @@ import Ellipsis from 'components/Ellipsis';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './AppStore.less';
+import { registerEventBus, unregisterEventBus } from '../../eventBusRegistration';
+import { ADDRESS_BIOS_REPORT } from '../../constants';
 
 @connect(({ listApp, appStore, loading }) => ({
   listApp,
@@ -17,7 +19,17 @@ export default class AppStore extends PureComponent {
     this.props.dispatch({
       type: 'listApp/fetch',
     });
+    registerEventBus(this, ADDRESS_BIOS_REPORT);
   }
+
+  componentWillUnmount() {
+    unregisterEventBus();
+  }
+
+  // TODO: implement callback for messaging this
+  // callback = payload => {
+  //
+  // };
 
   handleInstall = app => {
     this.props.dispatch({
@@ -59,7 +71,7 @@ export default class AppStore extends PureComponent {
 
     const extraContent = (
       <div className={styles.extraImg}>
-        <img alt="application_list" src="../../../public/images/apps.png" />
+        <img alt="application_list" src="/public/images/apps.png" />
       </div>
     );
 
@@ -83,7 +95,6 @@ export default class AppStore extends PureComponent {
                     ]}
                   >
                     <Card.Meta
-                      avatar={<img alt="" className={styles.cardAvatar} src={item.avatar} />}
                       title={<a href="#">{item.title}</a>}
                       description={
                         <Ellipsis className={styles.item} lines={3}>

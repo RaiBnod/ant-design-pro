@@ -12,7 +12,6 @@ export default {
         payload: [
           {
             id: 1,
-            avatar: '../../../jdbc.jpg',
             title: 'JDBC Example1',
             description: 'Here we have a Nube JDBC Engine example1, we can store apps like this',
             install: {
@@ -26,16 +25,28 @@ export default {
           },
           {
             id: 2,
-            avatar: '../../../jdbc.jpg',
-            title: 'JDBC Example2',
-            description: 'Here we have a Nube JDBC Engine example2, we can store apps like this',
+            title: 'Nube Edge Ditto Driver',
+            description: 'Nube Edge Ditto Driver App is available here.',
             install: {
               groupId: 'io.nubespark',
-              artifactId: 'nube-jdbc-engine',
+              artifactId: 'nube-edge-ditto-driver',
               version: '1.0-SNAPSHOT',
             },
             uninstall: {
-              artifactId: 'nube-jdbc-engine',
+              artifactId: 'nube-edge-ditto-driver',
+            },
+          },
+          {
+            id: 3,
+            title: 'Nube Server Ditto Driver',
+            description: 'Nube Server Ditto Driver App is available here.',
+            install: {
+              groupId: 'io.nubespark',
+              artifactId: 'nube-server-ditto-driver',
+              version: '1.0-SNAPSHOT',
+            },
+            uninstall: {
+              artifactId: 'nube-server-ditto-driver',
             },
           },
         ],

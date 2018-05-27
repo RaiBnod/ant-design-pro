@@ -36,12 +36,26 @@ export default class Monitor extends PureComponent {
     this.setState(({ data }) => {
       const { thingId } = payload.value;
       const previousValue = data[thingId] ? data[thingId] : [];
-      previousValue.push({
-        value: payload.value.features.temperature.properties.value,
-        timestamp: moment(payload.value.features.temperature.properties.timestamp).format('mm:ss'),
+      let key;
+
+      Object.keys(payload.value.features).forEach(x => {
+        key = x;
       });
-      const valuesToBeAdded = previousValue.slice(-this.state.totalCount);
-      return { data: { ...data, [thingId]: valuesToBeAdded } };
+
+      if (
+        key &&
+        !isNaN(payload.value.features[key].properties.value) &&
+        payload.value.features[key].properties.timestamp &&
+        moment(payload.value.features[key].properties.timestamp).format('mm:ss') !== 'Invalid date'
+      ) {
+        previousValue.push({
+          value: payload.value.features[key].properties.value,
+          timestamp: moment(payload.value.features[key].properties.timestamp).format('mm:ss'),
+          unit: payload.value.features[key].properties.unit,
+        });
+        const valuesToBeAdded = previousValue.slice(-this.state.totalCount);
+        return { data: { ...data, [thingId]: valuesToBeAdded } };
+      }
     });
   };
 
@@ -55,7 +69,9 @@ export default class Monitor extends PureComponent {
       <Fragment>
         {Object.keys(this.state.data).map(x => (
           <div className={styles.chartCard} key={x}>
-            <h1>{x}</h1>
+            <h1>
+              {x} <b>[mm:ss vs {this.state.data[x][0].unit}]</b>
+            </h1>
             <Card loading={this.props.loading} bordered={false} bodyStyle={{ padding: 0 }}>
               <Row>
                 <div className={styles.chartBar}>
