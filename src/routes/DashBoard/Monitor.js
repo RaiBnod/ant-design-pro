@@ -35,26 +35,35 @@ export default class Monitor extends PureComponent {
   callback = payload => {
     this.setState(({ data }) => {
       const { thingId } = payload.value;
-      const previousValue = data[thingId] ? data[thingId] : [];
+
       let key;
 
-      Object.keys(payload.value.features).forEach(x => {
-        key = x;
-      });
+      if (payload.value.features && payload.path === '/') {
+        const newData = {};
+        Object.keys(payload.value.features).forEach(x => {
+          let valuesToBeAdded;
+          key = x;
 
-      if (
-        key &&
-        !isNaN(payload.value.features[key].properties.value) &&
-        payload.value.features[key].properties.timestamp &&
-        moment(payload.value.features[key].properties.timestamp).format('mm:ss') !== 'Invalid date'
-      ) {
-        previousValue.push({
-          value: payload.value.features[key].properties.value,
-          timestamp: moment(payload.value.features[key].properties.timestamp).format('mm:ss'),
-          unit: payload.value.features[key].properties.unit,
+          if (
+            key &&
+            !isNaN(payload.value.features[key].properties.value) &&
+            payload.value.features[key].properties.timestamp &&
+            moment(payload.value.features[key].properties.timestamp).format('mm:ss') !==
+              'Invalid date'
+          ) {
+            const previousValue = data[thingId + key] ? data[thingId + key] : [];
+
+            previousValue.push({
+              value: parseInt(payload.value.features[key].properties.value, 10),
+              timestamp: moment(payload.value.features[key].properties.timestamp).format('mm:ss'),
+              unit: payload.value.features[key].properties.unit,
+            });
+
+            valuesToBeAdded = previousValue.slice(-this.state.totalCount);
+            newData[thingId + key] = valuesToBeAdded;
+          }
         });
-        const valuesToBeAdded = previousValue.slice(-this.state.totalCount);
-        return { data: { ...data, [thingId]: valuesToBeAdded } };
+        return { data: { ...data, ...newData } };
       }
     });
   };
