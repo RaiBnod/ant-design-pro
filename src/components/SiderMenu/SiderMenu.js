@@ -216,7 +216,7 @@ export default class SiderMenu extends PureComponent {
         <div className={styles.logo} key="logo">
           <Link to="/">
             <img src={logo} alt="logo" />
-            <h1>EnviroServices</h1>
+            <h1>Nube I/O</h1>
           </Link>
         </div>
         <Menu
