@@ -1,6 +1,6 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
-import { apiUrl } from '../urls';
+import { apiUrl, apiServerUrl } from '../urls';
 
 export async function queryProjectNotice() {
   return request('/api/project/notice');
@@ -81,10 +81,16 @@ export async function queryFakeList(params) {
   return request(`/api/fake_list?${stringify(params)}`);
 }
 
-export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+export async function accountLogin(params) {
+  return request(apiServerUrl.concat('/api/login/account'), {
     method: 'POST',
     body: params,
+  });
+}
+
+export async function accountLogout() {
+  return request(apiServerUrl.concat('/api/logout'), {
+    method: 'POST',
   });
 }
 

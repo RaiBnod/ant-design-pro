@@ -1,6 +1,13 @@
 import { routerRedux } from 'dva/router';
-import { fakeAccountLogin } from '../services/api';
-import { setAuthority } from '../utils/authority';
+import { accountLogin, accountLogout } from '../services/api';
+import {
+  setAuthority,
+  setAccessToken,
+  setRefreshToken,
+  removeAuthority,
+  removeAccessToken,
+  removeRefreshToken,
+} from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
 
 export default {
@@ -12,18 +19,24 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(accountLogin, payload);
+      // const response = '';
       yield put({
         type: 'changeLoginStatus',
-        payload: response,
+        payload: {
+          ...response,
+          currentAuthority: 'admin',
+          status: response && response.access_token ? true : 'error',
+        }, // TODO: Defining role
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response && response.access_token) {
         reloadAuthorized();
         yield put(routerRedux.push('/'));
       }
     },
-    *logout(_, { put, select }) {
+    *logout(_, { call, put, select }) {
+      yield call(accountLogout);
       try {
         // get location pathname
         const urlParams = new URL(window.location.href);
@@ -47,11 +60,18 @@ export default {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      if (payload.access_token && payload.refresh_token) {
+        setAccessToken(payload.access_token);
+        setRefreshToken(payload.refresh_token);
+        setAuthority(payload.currentAuthority);
+      } else {
+        removeAccessToken();
+        removeRefreshToken();
+        removeAuthority();
+      }
       return {
         ...state,
         status: payload.status,
-        type: payload.type,
       };
     },
   },
