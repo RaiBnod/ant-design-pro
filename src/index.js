@@ -2,7 +2,7 @@ import '@babel/polyfill';
 import 'url-polyfill';
 import dva from 'dva';
 
-import createHistory from 'history/createHashHistory';
+import createBrowserHistory from 'history/createBrowserHistory';
 // user BrowserHistory
 // import createHistory from 'history/createBrowserHistory';
 import createLoading from 'dva-loading';
@@ -12,7 +12,7 @@ import './rollbar';
 import './index.less';
 // 1. Initialize
 const app = dva({
-  history: createHistory(),
+  history: createBrowserHistory(),
 });
 
 // 2. Plugins
