@@ -12,5 +12,10 @@ export const registerEventBus = (component, address) => {
 };
 
 export const unregisterEventBus = () => {
-  eb.close();
+  try {
+    // Sometimes eb may not be opened and we want to just close it out
+    eb.close();
+  } catch (e) {
+    // Nothing need to do...
+  }
 };

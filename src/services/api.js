@@ -1,6 +1,7 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 import { apiUrl, apiServerUrl } from '../urls';
+import { getRefreshToken } from '../utils/authority';
 
 export async function queryProjectNotice() {
   return request('/api/project/notice');
@@ -91,6 +92,7 @@ export async function accountLogin(params) {
 export async function accountLogout() {
   return request(apiServerUrl.concat('/api/logout'), {
     method: 'POST',
+    body: { refresh_token: getRefreshToken() },
   });
 }
 
